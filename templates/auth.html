@@ -1,0 +1,644 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Auth - Bankers Attrition</title>
+  <!-- Glassmorphism CSS -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/glassmorphism-ui/dist/glassmorphism.min.css" />
+  <!-- Bootstrap 5 -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <!-- Animate.css -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
+  <!-- Font Awesome 6 -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <!-- AOS Animation Library -->
+  <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet" />
+  <style>
+    :root {
+      --primary: #6c5ce7;
+      --primary-dark: #5649c0;
+      --secondary: #00cec9;
+      --accent: #fd79a8;
+      --success: #00b894;
+      --dark: #2d3436;
+      --light: #f5f6fa;
+      --glass-blur: 12px;
+      --glass-opacity: 0.15;
+    }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+      color: var(--light);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      padding: 20px;
+      overflow-x: hidden;
+    }
+
+    /* Floating Blobs */
+    .blob {
+      position: fixed;
+      border-radius: 50%;
+      filter: blur(40px);
+      opacity: 0.15;
+      z-index: -1;
+    }
+
+    .blob-1 {
+      width: 300px;
+      height: 300px;
+      background: var(--primary);
+      top: 20%;
+      left: 10%;
+      animation: float 15s ease-in-out infinite;
+    }
+
+    .blob-2 {
+      width: 400px;
+      height: 400px;
+      background: var(--secondary);
+      bottom: 10%;
+      right: 10%;
+      animation: float 18s ease-in-out infinite reverse;
+    }
+
+    @keyframes float {
+      0% { transform: translate(0, 0) rotate(0deg); }
+      33% { transform: translate(50px, 50px) rotate(5deg); }
+      66% { transform: translate(-30px, 70px) rotate(-5deg); }
+      100% { transform: translate(0, 0) rotate(0deg); }
+    }
+
+    /* Auth Container */
+    .auth-container {
+      max-width: 480px;
+      width: 100%;
+      margin: 0 auto;
+      background: rgba(255, 255, 255, var(--glass-opacity));
+      backdrop-filter: blur(var(--glass-blur));
+      -webkit-backdrop-filter: blur(var(--glass-blur));
+      border-radius: 20px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+      overflow: hidden;
+      position: relative;
+      transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    .auth-container:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 15px 45px rgba(0, 0, 0, 0.3);
+    }
+
+    .auth-container::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(45deg, transparent, rgba(255,255,255,0.1), transparent);
+      transform: translateX(-100%);
+      transition: transform 0.6s ease;
+    }
+
+    .auth-container:hover::before {
+      transform: translateX(100%);
+    }
+
+    /* Auth Header */
+    .auth-header {
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      color: white;
+      padding: 30px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .auth-header::after {
+      content: '';
+      position: absolute;
+      top: -50%;
+      right: -50%;
+      width: 100%;
+      height: 200%;
+      background: rgba(255, 255, 255, 0.1);
+      transform: rotate(30deg);
+    }
+
+    .auth-header h2 {
+      font-family: 'Space Grotesk', sans-serif;
+      font-weight: 700;
+      margin-bottom: 5px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .auth-header p {
+      opacity: 0.9;
+      font-size: 0.9rem;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* Floating Icon */
+    .floating-icon {
+      font-size: 2.5rem;
+      margin-bottom: 15px;
+      position: relative;
+      z-index: 1;
+      display: inline-block;
+      animation: floating 6s ease-in-out infinite;
+    }
+
+    @keyframes floating {
+      0% { transform: translateY(0px) rotate(0deg); }
+      50% { transform: translateY(-15px) rotate(5deg); }
+      100% { transform: translateY(0px) rotate(0deg); }
+    }
+
+    /* Auth Body */
+    .auth-body {
+      padding: 30px;
+    }
+
+    /* Tabs */
+    .nav-tabs {
+      border: none;
+      position: relative;
+      margin-bottom: 30px;
+      display: flex;
+      justify-content: center;
+    }
+
+    .nav-tabs::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      height: 2px;
+      background: rgba(255, 255, 255, 0.1);
+      z-index: 1;
+    }
+
+    .nav-tabs .nav-link {
+      border: none;
+      color: rgba(255, 255, 255, 0.7);
+      font-weight: 500;
+      padding: 12px 25px;
+      position: relative;
+      z-index: 2;
+      transition: all 0.3s ease;
+      background: transparent;
+      border-radius: 8px;
+      margin: 0 5px;
+    }
+
+    .nav-tabs .nav-link.active {
+      color: white;
+      background: rgba(255, 255, 255, 0.1);
+    }
+
+    .nav-tabs .nav-link::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      height: 3px;
+      background: var(--secondary);
+      transform: scaleX(0);
+      transform-origin: center;
+      transition: transform 0.3s ease;
+    }
+
+    .nav-tabs .nav-link.active::after {
+      transform: scaleX(1);
+    }
+
+    /* Form Styles */
+    .form-control, .form-select {
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      color: white;
+      padding: 12px 15px;
+      border-radius: 10px;
+      transition: all 0.3s ease;
+    }
+
+    .form-control:focus, .form-select:focus {
+      background: rgba(255, 255, 255, 0.15);
+      border-color: var(--secondary);
+      box-shadow: 0 0 0 3px rgba(0, 206, 201, 0.2);
+      color: white;
+    }
+
+    .form-control::placeholder {
+      color: rgba(255, 255, 255, 0.5);
+    }
+
+    .form-label {
+      font-weight: 500;
+      color: rgba(255, 255, 255, 0.9);
+    }
+
+    .input-group-text {
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      color: rgba(255, 255, 255, 0.7);
+    }
+
+    .password-toggle {
+      cursor: pointer;
+      background: rgba(255, 255, 255, 0.1);
+      border-left: 1px solid rgba(255, 255, 255, 0.1);
+      color: rgba(255, 255, 255, 0.7);
+      transition: all 0.3s ease;
+    }
+
+    .password-toggle:hover {
+      color: var(--secondary);
+      background: rgba(0, 206, 201, 0.1);
+    }
+
+    /* Buttons */
+    .btn {
+      padding: 12px;
+      border-radius: 10px;
+      font-weight: 500;
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+      border: none;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+      color: white;
+    }
+
+    .btn-success {
+      background: linear-gradient(135deg, var(--success), #00997a);
+      color: white;
+    }
+
+    .btn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+    }
+
+    .btn:active {
+      transform: translateY(1px);
+    }
+
+    .btn::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(45deg, transparent, rgba(255,255,255,0.3), transparent);
+      transform: translateX(-100%);
+      transition: transform 0.6s ease;
+    }
+
+    .btn:hover::after {
+      transform: translateX(100%);
+    }
+
+    /* Social Login */
+    .social-login {
+      margin-top: 25px;
+      text-align: center;
+    }
+
+    .social-login p {
+      position: relative;
+      color: rgba(255, 255, 255, 0.7);
+      margin-bottom: 20px;
+    }
+
+    .social-login p::before,
+    .social-login p::after {
+      content: '';
+      position: absolute;
+      top: 50%;
+      width: 30%;
+      height: 1px;
+      background: rgba(255, 255, 255, 0.1);
+    }
+
+    .social-login p::before {
+      left: 0;
+    }
+
+    .social-login p::after {
+      right: 0;
+    }
+
+    .social-icons {
+      display: flex;
+      justify-content: center;
+      gap: 15px;
+    }
+
+    .social-icon {
+      width: 45px;
+      height: 45px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .social-icon::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(45deg, transparent, rgba(255,255,255,0.3), transparent);
+      transform: translateX(-100%);
+      transition: transform 0.6s ease;
+    }
+
+    .social-icon:hover {
+      transform: translateY(-5px) scale(1.1);
+      box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
+    }
+
+    .social-icon:hover::after {
+      transform: translateX(100%);
+    }
+
+    .google {
+      background: #DB4437;
+    }
+
+    .facebook {
+      background: #4267B2;
+    }
+
+    .twitter {
+      background: #1DA1F2;
+    }
+
+    /* Link Styles */
+    .auth-link {
+      color: rgba(255, 255, 255, 0.7);
+      text-decoration: none;
+      transition: all 0.3s ease;
+      position: relative;
+    }
+
+    .auth-link:hover {
+      color: var(--secondary);
+    }
+
+    .auth-link::after {
+      content: '';
+      position: absolute;
+      bottom: -2px;
+      left: 0;
+      width: 0;
+      height: 1px;
+      background: var(--secondary);
+      transition: width 0.3s ease;
+    }
+
+    .auth-link:hover::after {
+      width: 100%;
+    }
+
+    /* Tab Content Animation */
+    .tab-pane {
+      animation: fadeIn 0.5s ease-out;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Responsive Adjustments */
+    @media (max-width: 576px) {
+      .auth-container {
+        border-radius: 15px;
+      }
+
+      .auth-header {
+        padding: 20px;
+      }
+
+      .auth-body {
+        padding: 20px;
+      }
+
+      .nav-tabs .nav-link {
+        padding: 10px 15px;
+        font-size: 0.9rem;
+      }
+
+      .floating-icon {
+        font-size: 2rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Floating Blobs Background -->
+  <div class="blob blob-1"></div>
+  <div class="blob blob-2"></div>
+
+  <!-- Auth Container -->
+  <div class="auth-container animate__animated animate__fadeInUp" data-aos="zoom-in">
+    <div class="auth-header">
+      <div class="floating-icon">
+        <i class="fas fa-shield-alt"></i>
+      </div>
+      <h2>Bankers Attrition</h2>
+      <p>Secure access to your predictive analytics</p>
+    </div>
+
+    <div class="auth-body">
+      <ul class="nav nav-tabs" id="authTabs" role="tablist">
+        <li class="nav-item" role="presentation" data-aos="fade-right" data-aos-delay="200">
+          <a class="nav-link active" id="login-tab" data-bs-toggle="tab" href="#login" role="tab" aria-controls="login" aria-selected="true">
+            <i class="fas fa-sign-in-alt me-2"></i>Login
+          </a>
+        </li>
+        <li class="nav-item" role="presentation" data-aos="fade-left" data-aos-delay="200">
+          <a class="nav-link" id="register-tab" data-bs-toggle="tab" href="#register" role="tab" aria-controls="register" aria-selected="false">
+            <i class="fas fa-user-plus me-2"></i>Register
+          </a>
+        </li>
+      </ul>
+
+      <div class="tab-content" id="authTabContent">
+        <!-- Login Tab -->
+        <div class="tab-pane fade show active" id="login" role="tabpanel" aria-labelledby="login-tab">
+          <form method="POST" action="{{ url_for('login') }}" data-aos="fade-up" data-aos-delay="300">
+            <div class="mb-3">
+              <label for="loginUsername" class="form-label">Username</label>
+              <div class="input-group">
+                <span class="input-group-text"><i class="fas fa-user"></i></span>
+                <input type="text" class="form-control" id="loginUsername" name="username" placeholder="Enter your username" required />
+              </div>
+            </div>
+            <div class="mb-3">
+              <label for="loginPassword" class="form-label">Password</label>
+              <div class="input-group">
+                <span class="input-group-text"><i class="fas fa-lock"></i></span>
+                <input type="password" class="form-control" id="loginPassword" name="password" placeholder="Enter your password" required />
+                <span class="input-group-text password-toggle" onclick="togglePassword('loginPassword')">
+                  <i class="fas fa-eye"></i>
+                </span>
+              </div>
+              <div class="text-end mt-2">
+                <a href="#" class="auth-link small">Forgot password?</a>
+              </div>
+            </div>
+            <button type="submit" class="btn btn-primary w-100 mt-3">
+              <i class="fas fa-sign-in-alt me-2"></i> Login
+            </button>
+          </form>
+
+          <div class="social-login" data-aos="fade-up" data-aos-delay="400">
+            <p>Or login with</p>
+            <div class="social-icons">
+              <a href="#" class="social-icon google animate__animated animate__fadeIn" data-aos="fade-up" data-aos-delay="500">
+                <i class="fab fa-google"></i>
+              </a>
+              <a href="#" class="social-icon facebook animate__animated animate__fadeIn" data-aos="fade-up" data-aos-delay="600">
+                <i class="fab fa-facebook-f"></i>
+              </a>
+              <a href="#" class="social-icon twitter animate__animated animate__fadeIn" data-aos="fade-up" data-aos-delay="700">
+                <i class="fab fa-twitter"></i>
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Register Tab -->
+        <div class="tab-pane fade" id="register" role="tabpanel" aria-labelledby="register-tab">
+          <form method="POST" action="{{ url_for('register') }}" data-aos="fade-up" data-aos-delay="300">
+            <div class="row">
+              <div class="col-md-6 mb-3" data-aos="fade-right" data-aos-delay="400">
+                <label for="firstName" class="form-label">First Name</label>
+                <input type="text" class="form-control" id="firstName" name="first_name" placeholder="John" required />
+              </div>
+              <div class="col-md-6 mb-3" data-aos="fade-left" data-aos-delay="400">
+                <label for="lastName" class="form-label">Last Name</label>
+                <input type="text" class="form-control" id="lastName" name="last_name" placeholder="Doe" required />
+              </div>
+            </div>
+            <div class="mb-3" data-aos="fade-up" data-aos-delay="500">
+              <label for="registerUsername" class="form-label">Username</label>
+              <div class="input-group">
+                <span class="input-group-text"><i class="fas fa-user"></i></span>
+                <input type="text" class="form-control" id="registerUsername" name="username" placeholder="Choose a username" required />
+              </div>
+            </div>
+            <div class="mb-3" data-aos="fade-up" data-aos-delay="600">
+              <label for="registerEmail" class="form-label">Email</label>
+              <div class="input-group">
+                <span class="input-group-text"><i class="fas fa-envelope"></i></span>
+                <input type="email" class="form-control" id="registerEmail" name="email" placeholder="your@email.com" required />
+              </div>
+            </div>
+            <div class="mb-3" data-aos="fade-up" data-aos-delay="700">
+              <label for="registerPassword" class="form-label">Password</label>
+              <div class="input-group">
+                <span class="input-group-text"><i class="fas fa-lock"></i></span>
+                <input type="password" class="form-control" id="registerPassword" name="password" placeholder="Create a password" required />
+                <span class="input-group-text password-toggle" onclick="togglePassword('registerPassword')">
+                  <i class="fas fa-eye"></i>
+                </span>
+              </div>
+              <div class="form-text text-muted">Use 8 or more characters with a mix of letters, numbers & symbols</div>
+            </div>
+            <button type="submit" class="btn btn-success w-100 mt-3" data-aos="fade-up" data-aos-delay="800">
+              <i class="fas fa-user-plus me-2"></i> Register
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+  <script>
+    // Initialize AOS animations
+    AOS.init({
+      duration: 800,
+      easing: 'ease-in-out',
+      once: false
+    });
+
+    // Toggle password visibility
+    function togglePassword(id) {
+      const input = document.getElementById(id);
+      const icon = input.nextElementSibling.querySelector('i');
+
+      if (input.type === 'password') {
+        input.type = 'text';
+        icon.classList.remove('fa-eye');
+        icon.classList.add('fa-eye-slash');
+      } else {
+        input.type = 'password';
+        icon.classList.remove('fa-eye-slash');
+        icon.classList.add('fa-eye');
+      }
+    }
+
+    // Add animation to tab switching
+    document.querySelectorAll('[data-bs-toggle="tab"]').forEach(tab => {
+      tab.addEventListener('click', function() {
+        const target = this.getAttribute('href');
+        document.querySelector(target).classList.add('animate__animated', 'animate__fadeIn');
+      });
+    });
+
+    // Remove animation class after animation completes
+    document.querySelectorAll('.tab-pane').forEach(pane => {
+      pane.addEventListener('animationend', function() {
+        this.classList.remove('animate__animated', 'animate__fadeIn');
+      });
+    });
+
+    // Add ripple effect to buttons
+    document.querySelectorAll('.btn, .social-icon').forEach(button => {
+      button.addEventListener('click', function(e) {
+        const x = e.clientX - e.target.getBoundingClientRect().left;
+        const y = e.clientY - e.target.getBoundingClientRect().top;
+
+        const ripple = document.createElement('span');
+        ripple.classList.add('ripple-effect');
+        ripple.style.left = `${x}px`;
+        ripple.style.top = `${y}px`;
+
+        this.appendChild(ripple);
+
+        setTimeout(() => {
+          ripple.remove();
+        }, 1000);
+      });
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,1761 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Dashboard - Bankers Attrition</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    <!-- Animate.css -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
+    <!-- AOS (Animate On Scroll) -->
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+    <style>
+        :root {
+            --primary-color: #4361ee;
+            --primary-light: #6c8aff;
+            --secondary-color: #3f37c9;
+            --accent-color: #4cc9f0;
+            --success-color: #38b000;
+            --success-light: #70e000;
+            --danger-color: #e5383b;
+            --danger-light: #ff6b6b;
+            --warning-color: #f48c06;
+            --warning-light: #ffaa5e;
+            --dark-color: #1a1a2e;
+            --dark-light: #2a2a3a;
+            --light-color: #f8f9fa;
+            --sidebar-width: 280px;
+            --glass-effect: rgba(255, 255, 255, 0.05);
+            --glass-border: 1px solid rgba(255, 255, 255, 0.1);
+            --glass-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.15);
+            --transition-base: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #f5f7fa;
+            color: var(--dark-color);
+            overflow-x: hidden;
+            background: linear-gradient(135deg, #f5f7fa 0%, #e4e8f0 100%);
+        }
+
+        /* Glassmorphism Effect */
+        .glass-card {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-radius: 16px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.1);
+            transition: var(--transition-base);
+        }
+
+        .glass-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 12px 40px 0 rgba(31, 38, 135, 0.2);
+        }
+
+        /* Sidebar Styles - Modern Glassmorphism */
+        #sidebar {
+            width: var(--sidebar-width);
+            height: 100vh;
+            position: fixed;
+            background: linear-gradient(135deg, rgba(67, 97, 238, 0.9) 0%, rgba(63, 55, 201, 0.9) 100%);
+            color: white;
+            transition: var(--transition-base);
+            z-index: 1000;
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            box-shadow: 5px 0 30px rgba(0, 0, 0, 0.1);
+            border-right: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        #sidebar .sidebar-header {
+            padding: 25px 20px;
+            background: rgba(0, 0, 0, 0.1);
+            text-align: center;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        #sidebar .sidebar-header h4 {
+            color: white;
+            font-weight: 600;
+            margin-bottom: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.3rem;
+            letter-spacing: 0.5px;
+        }
+
+        #sidebar .sidebar-header i {
+            margin-right: 12px;
+            font-size: 1.8rem;
+            animation: pulse 2s infinite, float 6s ease-in-out infinite;
+        }
+
+        #sidebar .nav-link {
+            color: rgba(255, 255, 255, 0.85);
+            padding: 14px 20px;
+            margin: 8px 15px;
+            border-radius: 10px;
+            font-weight: 500;
+            transition: var(--transition-base);
+            display: flex;
+            align-items: center;
+            position: relative;
+            overflow: hidden;
+            font-size: 0.95rem;
+        }
+
+        #sidebar .nav-link i {
+            width: 24px;
+            margin-right: 12px;
+            text-align: center;
+            font-size: 1.2rem;
+            transition: var(--transition-base);
+        }
+
+        #sidebar .nav-link:hover {
+            color: white;
+            background: rgba(255, 255, 255, 0.15);
+            transform: translateX(8px);
+        }
+
+        #sidebar .nav-link:hover i {
+            transform: scale(1.2);
+        }
+
+        #sidebar .nav-link.active {
+            color: white;
+            background: rgba(255, 255, 255, 0.25);
+            font-weight: 600;
+        }
+
+        #sidebar .nav-link.active::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            height: 100%;
+            width: 4px;
+            background: white;
+            border-radius: 0 4px 4px 0;
+        }
+
+        #sidebar .logout-btn {
+            margin-top: auto;
+            margin-bottom: 25px;
+            padding: 0 15px;
+        }
+
+        /* Main Content Styles */
+        #content {
+            margin-left: var(--sidebar-width);
+            padding: 25px;
+            transition: var(--transition-base);
+            min-height: 100vh;
+        }
+
+        /* Card Styles - Modern */
+        .card {
+            border: none;
+            border-radius: 16px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.05);
+            transition: var(--transition-base);
+            margin-bottom: 25px;
+            overflow: hidden;
+            background: white;
+        }
+
+        .card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+        }
+
+        .card-header {
+            background-color: white;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+            font-weight: 600;
+            padding: 18px 25px;
+            font-size: 1.1rem;
+            display: flex;
+            align-items: center;
+        }
+
+        .card-header i {
+            margin-right: 10px;
+            font-size: 1.2rem;
+            color: var(--primary-color);
+        }
+
+        .card-body {
+            padding: 25px;
+        }
+
+        /* Summary Cards - Modern with Neumorphism */
+        .summary-card {
+            text-align: center;
+            padding: 25px;
+            border-radius: 16px;
+            color: white;
+            position: relative;
+            overflow: hidden;
+            transition: var(--transition-base);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+            z-index: 1;
+        }
+
+        .summary-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(255,255,255,0.15) 0%, rgba(255,255,255,0) 100%);
+            z-index: -1;
+        }
+
+        .summary-card::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(
+                to bottom right,
+                rgba(255, 255, 255, 0) 0%,
+                rgba(255, 255, 255, 0.1) 50%,
+                rgba(255, 255, 255, 0) 100%
+            );
+            transform: rotate(30deg);
+            transition: var(--transition-base);
+            z-index: -1;
+        }
+
+        .summary-card:hover::after {
+            transform: rotate(30deg) translateX(50px);
+        }
+
+        .summary-card i {
+            font-size: 2.8rem;
+            margin-bottom: 20px;
+            opacity: 0.9;
+            text-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            transition: var(--transition-base);
+        }
+
+        .summary-card:hover i {
+            transform: scale(1.1);
+        }
+
+        .summary-card h3 {
+            font-size: 2.8rem;
+            font-weight: 700;
+            margin-bottom: 5px;
+            text-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .summary-card p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+            margin-bottom: 0;
+            letter-spacing: 0.5px;
+        }
+
+        .churn-card {
+            background: linear-gradient(135deg, var(--danger-color) 0%, var(--danger-light) 100%);
+        }
+
+        .retain-card {
+            background: linear-gradient(135deg, var(--success-color) 0%, var(--success-light) 100%);
+        }
+
+        .total-card {
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-light) 100%);
+        }
+
+        /* Form Styles - Modern */
+        .form-control, .form-select {
+            border: 1px solid rgba(0, 0, 0, 0.1);
+            padding: 14px 18px;
+            border-radius: 12px;
+            transition: var(--transition-base);
+            background-color: rgba(255, 255, 255, 0.8);
+        }
+
+        .form-control:focus, .form-select:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 4px rgba(67, 97, 238, 0.15);
+            background-color: white;
+            transform: translateY(-2px);
+        }
+
+        /* Button Styles - Modern with Gradient */
+        .btn {
+            padding: 12px 24px;
+            border-radius: 12px;
+            font-weight: 500;
+            transition: var(--transition-base);
+            position: relative;
+            overflow: hidden;
+            border: none;
+            letter-spacing: 0.5px;
+            font-size: 0.95rem;
+        }
+
+        .btn:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        .btn::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(45deg, transparent 0%, rgba(255,255,255,0.4) 50%, transparent 100%);
+            transform: translateX(-100%);
+            transition: transform 0.8s ease;
+        }
+
+        .btn:hover::after {
+            transform: translateX(100%);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-light) 100%);
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, var(--success-color) 0%, var(--success-light) 100%);
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, var(--danger-color) 0%, var(--danger-light) 100%);
+        }
+
+        .btn-outline-primary {
+            border: 2px solid var(--primary-color);
+            color: var(--primary-color);
+            background: transparent;
+        }
+
+        .btn-outline-primary:hover {
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-light) 100%);
+            color: white;
+        }
+
+        /* Table Styles - Modern */
+        .table {
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        }
+
+        .table th {
+            background-color: var(--primary-color);
+            color: white;
+            font-weight: 500;
+            padding: 15px;
+            text-transform: uppercase;
+            font-size: 0.8rem;
+            letter-spacing: 0.5px;
+        }
+
+        .table td {
+            padding: 12px 15px;
+            vertical-align: middle;
+            border-top: 1px solid rgba(0, 0, 0, 0.03);
+        }
+
+        .table tr:hover td {
+            background-color: rgba(67, 97, 238, 0.03);
+        }
+
+        /* Badge Styles */
+        .badge {
+            padding: 8px 12px;
+            border-radius: 8px;
+            font-weight: 500;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        /* Toggle Switch - Modern */
+        .switch-toggle {
+            display: flex;
+            background: rgba(0, 0, 0, 0.05);
+            border-radius: 50px;
+            padding: 6px;
+            margin-bottom: 25px;
+            box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .switch-toggle input[type="radio"] {
+            display: none;
+        }
+
+        .switch-toggle label {
+            padding: 12px 20px;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: var(--transition-base);
+            text-align: center;
+            flex: 1;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .switch-toggle label i {
+            margin-right: 8px;
+        }
+
+        .switch-toggle input[type="radio"]:checked + label {
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-light) 100%);
+            color: white;
+            box-shadow: 0 4px 15px rgba(67, 97, 238, 0.3);
+        }
+
+        /* Animations */
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-8px); }
+            100% { transform: translateY(0px); }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes slideInLeft {
+            from { opacity: 0; transform: translateX(-30px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        @keyframes slideInRight {
+            from { opacity: 0; transform: translateX(30px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        @keyframes ripple {
+            0% { transform: scale(0.8); opacity: 1; }
+            100% { transform: scale(2.5); opacity: 0; }
+        }
+
+        .animate-fade-in {
+            animation: fadeIn 0.8s ease-out forwards;
+        }
+
+        .animate-slide-left {
+            animation: slideInLeft 0.8s ease-out forwards;
+        }
+
+        .animate-slide-right {
+            animation: slideInRight 0.8s ease-out forwards;
+        }
+
+        /* Ripple Effect */
+        .ripple {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .ripple-effect {
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.4);
+            transform: scale(0);
+            animation: ripple 0.6s linear;
+            pointer-events: none;
+        }
+
+        /* Chart Container */
+        .chart-container {
+            position: relative;
+            height: 320px;
+            width: 100%;
+        }
+
+        /* Tab Content Animation */
+        .tab-pane {
+            animation: fadeIn 0.6s ease-out;
+        }
+
+        /* Alert Styles */
+        .alert {
+            border-radius: 12px;
+            padding: 15px 20px;
+            border: none;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        }
+
+        .alert i {
+            margin-right: 10px;
+            font-size: 1.2rem;
+        }
+
+        /* Responsive Styles */
+        @media (max-width: 992px) {
+            #sidebar {
+                transform: translateX(-100%);
+                width: 300px;
+            }
+
+            #sidebar.active {
+                transform: translateX(0);
+            }
+
+            #content {
+                margin-left: 0;
+                padding: 20px;
+            }
+
+            .mobile-menu-btn {
+                display: flex !important;
+            }
+        }
+
+        /* Mobile Menu Button */
+        .mobile-menu-btn {
+            position: fixed;
+            top: 25px;
+            left: 25px;
+            z-index: 1100;
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-light) 100%);
+            color: white;
+            border: none;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 8px 20px rgba(67, 97, 238, 0.3);
+            transition: var(--transition-base);
+        }
+
+        .mobile-menu-btn:hover {
+            transform: scale(1.1);
+        }
+
+        /* Hover Effects for Cards */
+        .hover-scale {
+            transition: var(--transition-base);
+        }
+
+        .hover-scale:hover {
+            transform: scale(1.02);
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.05);
+            border-radius: 10px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: rgba(67, 97, 238, 0.5);
+            border-radius: 10px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--primary-color);
+        }
+
+        /* Floating Elements */
+        .floating {
+            animation: float 6s ease-in-out infinite;
+        }
+
+        /* Page Title */
+        .page-title {
+            position: relative;
+            display: inline-block;
+            margin-bottom: 30px;
+        }
+
+        .page-title::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 0;
+            width: 50px;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary-color) 0%, var(--accent-color) 100%);
+            border-radius: 2px;
+        }
+
+        /* Tooltip Customization */
+        .tooltip-inner {
+            background-color: var(--dark-color);
+            border-radius: 8px;
+            padding: 8px 12px;
+            font-size: 0.8rem;
+        }
+
+        .bs-tooltip-auto[data-popper-placement^=top] .tooltip-arrow::before,
+        .bs-tooltip-top .tooltip-arrow::before {
+            border-top-color: var(--dark-color);
+        }
+
+        /* Progress Bar */
+        .progress {
+            height: 10px;
+            border-radius: 5px;
+            background-color: rgba(0, 0, 0, 0.05);
+        }
+
+        .progress-bar {
+            background: linear-gradient(90deg, var(--primary-color) 0%, var(--accent-color) 100%);
+            border-radius: 5px;
+        }
+
+        /* Custom Checkbox */
+        .form-check-input:checked {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+        }
+
+        /* Loading Spinner */
+        .spinner-border {
+            width: 1.5rem;
+            height: 1.5rem;
+            border-width: 0.2em;
+        }
+    </style>
+</head>
+<body>
+    <!-- Mobile Menu Button -->
+    <button class="mobile-menu-btn animate__animated animate__fadeIn floating" id="mobileMenuBtn">
+        <i class="fas fa-bars"></i>
+    </button>
+
+    <!-- Sidebar -->
+    <div id="sidebar" class="d-flex flex-column">
+        <div class="sidebar-header animate__animated animate__fadeInDown">
+            <h4><i class="fas fa-shield-alt"></i> Bankers Attrition</h4>
+        </div>
+        <hr class="mt-0 mb-2 mx-3" style="border-color: rgba(255,255,255,0.1);" />
+        <ul class="nav nav-pills flex-column mb-auto px-3" id="sidebarTabs" role="tablist">
+            <li class="nav-item" data-aos="fade-left" data-aos-delay="100">
+                <a class="nav-link active ripple" id="summary-tab" data-bs-toggle="tab" href="#summary" role="tab">
+                    <i class="fas fa-chart-pie"></i> Dashboard
+                </a>
+            </li>
+            <li class="nav-item" data-aos="fade-left" data-aos-delay="200">
+                <a class="nav-link ripple" id="predict-tab" data-bs-toggle="tab" href="#predict" role="tab">
+                    <i class="fas fa-calculator"></i> Predict Attrition
+                </a>
+            </li>
+            <li class="nav-item" data-aos="fade-left" data-aos-delay="300">
+                <a class="nav-link ripple" id="recent-tab" data-bs-toggle="tab" href="#recent" role="tab">
+                    <i class="fas fa-history"></i> Recent Predictions
+                </a>
+            </li>
+            <li class="nav-item" data-aos="fade-left" data-aos-delay="400">
+                <a class="nav-link ripple" id="analytics-tab" data-bs-toggle="tab" href="#analytics" role="tab">
+                    <i class="fas fa-chart-line"></i> Analytics
+                </a>
+            </li>
+            <li class="nav-item" data-aos="fade-left" data-aos-delay="500">
+                <a class="nav-link ripple" id="segmentation-tab" data-bs-toggle="tab" href="#segmentation" role="tab">
+                    <i class="fas fa-users"></i> Segmentation
+                </a>
+            </li>
+        </ul>
+        <hr class="my-2 mx-3" style="border-color: rgba(255,255,255,0.1);" />
+        <div class="px-3 pb-4 logout-btn" data-aos="fade-up" data-aos-delay="600">
+            <a href="{{ url_for('logout') }}" class="btn btn-outline-light w-100 ripple">
+                <i class="fas fa-sign-out-alt me-2"></i> Logout
+            </a>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div id="content">
+        <!-- Flash Messages -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+          {% if messages %}
+            {% for category, message in messages %}
+              <div class="alert alert-{{ category }} alert-dismissible fade show animate__animated animate__fadeIn" role="alert">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+              </div>
+            {% endfor %}
+          {% endif %}
+        {% endwith %}
+
+        <div class="tab-content">
+            <!-- Summary Tab Pane -->
+            <div class="tab-pane fade show active" id="summary" role="tabpanel" aria-labelledby="summary-tab">
+                <h2 class="page-title animate__animated animate__fadeIn">Dashboard Overview</h2>
+
+                <div class="row">
+                    <div class="col-md-4" data-aos="fade-up" data-aos-delay="100">
+                        <div class="summary-card churn-card hover-scale">
+                            <i class="fas fa-user-slash"></i>
+                            <h3>{{ will_churn }}</h3>
+                            <p>Customers Will Churn</p>
+                        </div>
+                    </div>
+                    <div class="col-md-4" data-aos="fade-up" data-aos-delay="200">
+                        <div class="summary-card retain-card hover-scale">
+                            <i class="fas fa-user-check"></i>
+                            <h3>{{ will_not_churn }}</h3>
+                            <p>Customers Will Stay</p>
+                        </div>
+                    </div>
+                    <div class="col-md-4" data-aos="fade-up" data-aos-delay="300">
+                        <div class="summary-card total-card hover-scale">
+                            <i class="fas fa-users"></i>
+                            <h3>{{ will_churn + will_not_churn }}</h3>
+                            <p>Total Customers</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row mt-4">
+                    <div class="col-md-6" data-aos="fade-right" data-aos-delay="100">
+                        <div class="card glass-card">
+                            <div class="card-header">
+                                <i class="fas fa-chart-pie me-2"></i> Churn Distribution
+                            </div>
+                            <div class="card-body">
+                                <div class="chart-container">
+                                    <canvas id="churnPie"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6" data-aos="fade-left" data-aos-delay="100">
+                        <div class="card glass-card">
+                            <div class="card-header">
+                                <i class="fas fa-chart-line me-2"></i> Churn Over Time
+                            </div>
+                            <div class="card-body">
+                                <div class="chart-container">
+                                    <canvas id="churnLine"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Additional Metrics -->
+                <div class="row mt-4">
+                    <div class="col-md-12" data-aos="fade-up" data-aos-delay="200">
+                        <div class="card glass-card">
+                            <div class="card-header">
+                                <i class="fas fa-tachometer-alt me-2"></i> Key Performance Indicators
+                            </div>
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-md-3 text-center">
+                                        <div class="mb-3">
+                                            <div class="text-muted mb-1">Churn Rate</div>
+                                            <h3 class="text-danger">{{ "{:.1%}".format(will_churn / (will_churn + will_not_churn)) }}</h3>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3 text-center">
+                                        <div class="mb-3">
+                                            <div class="text-muted mb-1">Avg Transaction</div>
+                                            <h3>${{ "{:,.0f}".format(avg_transaction) }}</h3>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3 text-center">
+                                        <div class="mb-3">
+                                            <div class="text-muted mb-1">Avg Utilization</div>
+                                            <h3>{{ "{:.1%}".format(avg_utilization) }}</h3>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3 text-center">
+                                        <div class="mb-3">
+                                            <div class="text-muted mb-1">Avg Products</div>
+                                            <h3>{{ "{:.1f}".format(avg_products) }}</h3>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Predict Tab Pane -->
+            <div class="tab-pane fade" id="predict" role="tabpanel" aria-labelledby="predict-tab">
+                <h2 class="page-title">Predict Customer Attrition</h2>
+
+                <!-- Toggle buttons -->
+                <div class="switch-toggle mb-4" data-aos="fade-up">
+                    <input type="radio" id="singleMode" name="predictMode" autocomplete="off" checked>
+                    <label for="singleMode"><i class="fas fa-user me-2"></i> Single Prediction</label>
+
+                    <input type="radio" id="batchMode" name="predictMode" autocomplete="off">
+                    <label for="batchMode"><i class="fas fa-users me-2"></i> Batch Prediction</label>
+                </div>
+
+                <!-- Single prediction form -->
+                <form method="POST" action="{{ url_for('predict') }}" id="singleForm" data-aos="fade-up" data-aos-delay="100">
+                    <div class="card glass-card">
+                        <div class="card-header">
+                            <i class="fas fa-user me-2"></i> Customer Details
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="Total_Trans_Amt" class="form-label">Total Transaction Amount</label>
+                                    <input type="number" step="any" class="form-control" name="Total_Trans_Amt" required>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="Total_Trans_Ct" class="form-label">Total Transaction Count</label>
+                                    <input type="number" step="any" class="form-control" name="Total_Trans_Ct" required>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="Total_Ct_Chng_Q4_Q1" class="form-label">Transaction Count Change (Q4 vs Q1)</label>
+                                    <input type="number" step="any" class="form-control" name="Total_Ct_Chng_Q4_Q1" required>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="Total_Revolving_Bal" class="form-label">Total Revolving Balance</label>
+                                    <input type="number" step="any" class="form-control" name="Total_Revolving_Bal" required>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="Avg_Utilization_Ratio" class="form-label">Avg Utilization Ratio</label>
+                                    <input type="number" step="any" class="form-control" name="Avg_Utilization_Ratio" required>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="Total_Relationship_Count" class="form-label">Total Relationship Count</label>
+                                    <input type="number" step="any" class="form-control" name="Total_Relationship_Count" required>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="Total_Amt_Chng_Q4_Q1" class="form-label">Amount Change (Q4 vs Q1)</label>
+                                    <input type="number" step="any" class="form-control" name="Total_Amt_Chng_Q4_Q1" required>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="Customer_Age" class="form-label">Customer Age</label>
+                                    <input type="number" class="form-control" name="Customer_Age" required>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="Credit_Limit" class="form-label">Credit Limit</label>
+                                    <input type="number" step="any" class="form-control" name="Credit_Limit" required>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="Avg_Open_To_Buy" class="form-label">Avg Open To Buy</label>
+                                    <input type="number" step="any" class="form-control" name="Avg_Open_To_Buy" required>
+                                </div>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="Income_Category" class="form-label">Income Category</label>
+                                <select class="form-select" name="Income_Category" required>
+                                    <option value="0">Less than $40K</option>
+                                    <option value="1">$40K - $60K</option>
+                                    <option value="2">$60K - $80K</option>
+                                    <option value="3">$80K - $120K</option>
+                                    <option value="4">$120K+</option>
+                                </select>
+                            </div>
+
+                            <button type="submit" class="btn btn-primary mt-3 ripple">
+                                <i class="fas fa-calculator me-2"></i> Predict Attrition
+                            </button>
+                        </div>
+                    </div>
+                </form>
+
+                <!-- Batch prediction form -->
+                <form method="POST" action="{{ url_for('batch_predict') }}" enctype="multipart/form-data" id="batchForm" style="display:none;" data-aos="fade-up" data-aos-delay="100">
+                    <div class="card glass-card">
+                        <div class="card-header">
+                            <i class="fas fa-users me-2"></i> Batch Prediction
+                        </div>
+                        <div class="card-body">
+                            {% if batch_error %}
+                                <div class="alert alert-danger">{{ batch_error }}</div>
+                            {% endif %}
+
+                            <div class="mb-4">
+                                <label for="csvFile" class="form-label">Upload CSV File</label>
+                                <input type="file" class="form-control" id="csvFile" name="file" accept=".csv" required />
+                                <div class="form-text mt-2">
+                                    <i class="fas fa-info-circle me-2"></i> CSV should contain all required fields for prediction
+                                </div>
+                            </div>
+
+                            <button type="submit" class="btn btn-success ripple">
+                                <i class="fas fa-file-upload me-2"></i> Process Batch Prediction
+                            </button>
+                        </div>
+                    </div>
+                </form>
+
+                {% if batch_summary %}
+                    <div class="card mt-4 glass-card" data-aos="fade-up" data-aos-delay="200">
+                        <div class="card-header">
+                            <i class="fas fa-chart-bar me-2"></i> Batch Prediction Summary
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                {% for key, val in batch_summary.items() %}
+                                    <div class="col-md-4 mb-3">
+                                        <div class="p-3 bg-light rounded hover-scale">
+                                            <h5 class="mb-1">{{ key }}</h5>
+                                            <p class="mb-0 fs-4">{{ val }}</p>
+                                        </div>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                {% endif %}
+
+                {% if batch_results %}
+                    <div class="card mt-4 glass-card" data-aos="fade-up" data-aos-delay="300">
+                        <div class="card-header d-flex justify-content-between align-items-center">
+                            <div>
+                                <i class="fas fa-table me-2"></i> Sample Results ({{ batch_results|length }})
+                            </div>
+                            <a href="{{ url_for('export_batch_results') }}" class="btn btn-sm btn-outline-primary ripple">
+                                <i class="fas fa-download me-1"></i> Export
+                            </a>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-striped table-hover">
+                                    <thead>
+                                        <tr>
+                                            {% for col in batch_results[0].keys() %}
+                                                <th>{{ col }}</th>
+                                            {% endfor %}
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for row in batch_results %}
+                                            <tr>
+                                                {% for col in row.keys() %}
+                                                    <td>{{ row[col] }}</td>
+                                                {% endfor %}
+                                            </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                {% endif %}
+            </div>
+
+            <!-- Segmentation Tab Pane -->
+            <div class="tab-pane fade" id="segmentation" role="tabpanel" aria-labelledby="segmentation-tab">
+                <h2 class="page-title">Customer Segmentation</h2>
+
+                <div class="row">
+                    <div class="col-md-6" data-aos="fade-right">
+                        <div class="card glass-card">
+                            <div class="card-header">
+                                <i class="fas fa-user-clock me-2"></i> Churn by Age Group
+                            </div>
+                            <div class="card-body">
+                                <div class="chart-container">
+                                    <canvas id="churnByAgeGroup"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6" data-aos="fade-left">
+                        <div class="card glass-card">
+                            <div class="card-header">
+                                <i class="fas fa-money-bill-wave me-2"></i> Churn by Income Category
+                            </div>
+                            <div class="card-body">
+                                <div class="chart-container">
+                                    <canvas id="churnByIncomeCategory"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row mt-4">
+                    <div class="col-md-6" data-aos="fade-right" data-aos-delay="100">
+                        <div class="card glass-card">
+                            <div class="card-header">
+                                <i class="fas fa-credit-card me-2"></i> Churn by Credit Utilization
+                            </div>
+                            <div class="card-body">
+                                <div class="chart-container">
+                                    <canvas id="churnByUtilization"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6" data-aos="fade-left" data-aos-delay="100">
+                        <div class="card glass-card">
+                            <div class="card-header">
+                                <i class="fas fa-boxes me-2"></i> Churn by Product Count
+                            </div>
+                            <div class="card-body">
+                                <div class="chart-container">
+                                    <canvas id="churnByProductCount"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card mt-4 glass-card" data-aos="fade-up" data-aos-delay="200">
+                    <div class="card-header">
+                        <i class="fas fa-lightbulb me-2"></i> Insights
+                    </div>
+                    <div class="card-body">
+                        <div class="alert alert-info">
+                            <i class="fas fa-info-circle me-2"></i> Customers aged 30-45 with income $40K-$80K show highest churn rates.
+                        </div>
+                        <div class="alert alert-warning">
+                            <i class="fas fa-exclamation-triangle me-2"></i> High credit utilization (>75%) correlates strongly with attrition.
+                        </div>
+                        <div class="alert alert-success">
+                            <i class="fas fa-check-circle me-2"></i> Customers with 3+ products show 60% lower churn probability.
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recent Predictions Tab Pane -->
+            <div class="tab-pane fade" id="recent" role="tabpanel" aria-labelledby="recent-tab">
+                <h2 class="page-title">Recent Predictions</h2>
+
+                {% if recent_predictions %}
+                    <div class="d-flex justify-content-between mb-3" data-aos="fade-up">
+                        <a href="{{ url_for('export_predictions') }}" class="btn btn-outline-primary ripple">
+                            <i class="fas fa-download me-2"></i> Export as CSV
+                        </a>
+                        <div class="text-muted">
+                            Showing {{ recent_predictions|length }} most recent predictions
+                        </div>
+                    </div>
+
+                    <div class="card glass-card" data-aos="fade-up" data-aos-delay="100">
+                        <div class="card-body p-0">
+                            <div class="table-responsive">
+                                <table class="table table-hover mb-0">
+                                    <thead>
+                                        <tr>
+                                            <th>Date</th>
+                                            <th>Prediction</th>
+                                            <th>Trans Amt</th>
+                                            <th>Trans Count</th>
+                                            <th>Utilization</th>
+                                            <th>Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for row in recent_predictions %}
+                                        <tr>
+                                            <td>{{ row[7] }}</td>
+                                            <td>
+                                                <span class="badge bg-{% if row[6] == 'Will Churn' %}danger{% else %}success{% endif %}">
+                                                    {{ row[6] }}
+                                                </span>
+                                            </td>
+                                            <td>${{ "{:,.2f}".format(row[1]) }}</td>
+                                            <td>{{ row[2] }}</td>
+                                            <td>{{ "{:.1%}".format(row[5]) }}</td>
+                                            <td>
+                                                <form action="{{ url_for('delete_prediction', prediction_id=row[0]) }}" method="POST" style="display:inline;">
+                                                    <button type="submit" class="btn btn-sm btn-danger ripple" onclick="return confirm('Delete this prediction?')">
+                                                        <i class="fas fa-trash"></i>
+                                                    </button>
+                                                </form>
+                                            </td>
+                                        </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                {% else %}
+                    <div class="card glass-card" data-aos="fade-up">
+                        <div class="card-body text-center py-5">
+                            <i class="fas fa-history fa-3x text-muted mb-3 floating"></i>
+                            <h4>No predictions yet</h4>
+                            <p class="text-muted">Your recent predictions will appear here</p>
+                            <a href="#predict" class="btn btn-primary ripple" data-bs-toggle="tab">
+                                <i class="fas fa-calculator me-2"></i> Make a Prediction
+                            </a>
+                        </div>
+                    </div>
+                {% endif %}
+            </div>
+
+            <!-- Analytics Tab Pane -->
+            <div class="tab-pane fade" id="analytics" role="tabpanel" aria-labelledby="analytics-tab">
+                <h2 class="page-title">Analytics Dashboard</h2>
+
+                <!-- Filter Form -->
+                <form method="GET" action="{{ url_for('dashboard') }}" class="row g-3 align-items-end mb-4 glass-card p-4" data-aos="fade-up">
+                    <div class="col-md-3">
+                        <label for="start_date" class="form-label">Start Date</label>
+                        <input type="date" class="form-control" name="start_date" value="{{ request.args.get('start_date', '') }}">
+                    </div>
+                    <div class="col-md-3">
+                        <label for="end_date" class="form-label">End Date</label>
+                        <input type="date" class="form-control" name="end_date" value="{{ request.args.get('end_date', '') }}">
+                    </div>
+                    <div class="col-md-3">
+                        <label for="prediction_type" class="form-label">Prediction Type</label>
+                        <select class="form-select" name="prediction_type">
+                            <option value="">All</option>
+                            <option value="Will Churn" {% if request.args.get('prediction_type') == 'Will Churn' %}selected{% endif %}>Will Churn</option>
+                            <option value="Will Not Churn" {% if request.args.get('prediction_type') == 'Will Not Churn' %}selected{% endif %}>Will Not Churn</option>
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <button type="submit" class="btn btn-primary ripple">
+                            <i class="fas fa-filter me-2"></i> Apply Filters
+                        </button>
+                        <a href="{{ url_for('dashboard') }}" class="btn btn-outline-secondary ripple ms-2">
+                            <i class="fas fa-sync-alt me-2"></i> Reset
+                        </a>
+                    </div>
+                </form>
+
+                <div class="row">
+                    <div class="col-md-6" data-aos="fade-right">
+                        <div class="card glass-card">
+                            <div class="card-header">
+                                <i class="fas fa-chart-pie me-2"></i> Churn Distribution
+                            </div>
+                            <div class="card-body">
+                                <div class="chart-container">
+                                    <canvas id="churnPie"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6" data-aos="fade-left">
+                        <div class="card glass-card">
+                            <div class="card-header">
+                                <i class="fas fa-chart-line me-2"></i> Churn Over Time
+                            </div>
+                            <div class="card-body">
+                                <div class="chart-container">
+                                    <canvas id="churnLine"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card mt-4 glass-card" data-aos="fade-up" data-aos-delay="100">
+                    <div class="card-header">
+                        <i class="fas fa-chart-bar me-2"></i> Credit Limit Distribution
+                    </div>
+                    <div class="card-body">
+                        <div class="chart-container">
+                            <canvas id="creditDist"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row mt-4">
+                    <div class="col-md-6" data-aos="fade-right" data-aos-delay="200">
+                        <div class="card glass-card">
+                            <div class="card-header">
+                                <i class="fas fa-exchange-alt me-2"></i> Transaction Trends
+                            </div>
+                            <div class="card-body">
+                                <div class="chart-container">
+                                    <canvas id="transactionTrends"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6" data-aos="fade-left" data-aos-delay="200">
+                        <div class="card glass-card">
+                            <div class="card-header">
+                                <i class="fas fa-percentage me-2"></i> Utilization Patterns
+                            </div>
+                            <div class="card-body">
+                                <div class="chart-container">
+                                    <canvas id="utilizationPatterns"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script>
+        // Initialize AOS (Animate On Scroll)
+        AOS.init({
+            duration: 800,
+            easing: 'ease-in-out',
+            once: true,
+            offset: 100
+        });
+
+        // Mobile Menu Toggle
+        document.getElementById('mobileMenuBtn').addEventListener('click', function() {
+            document.getElementById('sidebar').classList.toggle('active');
+        });
+
+        // Ripple Effect for Buttons
+        document.querySelectorAll('.ripple').forEach(button => {
+            button.addEventListener('click', function(e) {
+                const x = e.clientX - e.target.getBoundingClientRect().left;
+                const y = e.clientY - e.target.getBoundingClientRect().top;
+
+                const ripple = document.createElement('span');
+                ripple.classList.add('ripple-effect');
+                ripple.style.left = `${x}px`;
+                ripple.style.top = `${y}px`;
+
+                this.appendChild(ripple);
+
+                setTimeout(() => {
+                    ripple.remove();
+                }, 600);
+            });
+        });
+
+        // Form Toggle
+        document.addEventListener('DOMContentLoaded', () => {
+            const singleRadio = document.getElementById('singleMode');
+            const batchRadio = document.getElementById('batchMode');
+            const singleForm = document.getElementById('singleForm');
+            const batchForm = document.getElementById('batchForm');
+
+            function toggleForms() {
+                if (singleRadio.checked) {
+                    singleForm.style.display = 'block';
+                    batchForm.style.display = 'none';
+                    AOS.refresh(); // Refresh animations after form change
+                } else {
+                    singleForm.style.display = 'none';
+                    batchForm.style.display = 'block';
+                    AOS.refresh(); // Refresh animations after form change
+                }
+            }
+
+            singleRadio.addEventListener('change', toggleForms);
+            batchRadio.addEventListener('change', toggleForms);
+
+            // Initialize visibility
+            toggleForms();
+        });
+
+        // Initialize Charts
+        function initCharts() {
+            // Pie Chart: Churn Summary
+            new Chart(document.getElementById('churnPie'), {
+                type: 'doughnut',
+                data: {
+                    labels: ['Will Churn', 'Will Not Churn'],
+                    datasets: [{
+                        data: [{{ will_churn }}, {{ will_not_churn }}],
+                        backgroundColor: ['#e5383b', '#38b000'],
+                        borderWidth: 0,
+                        hoverOffset: 10
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: {
+                                padding: 20,
+                                usePointStyle: true,
+                                pointStyle: 'circle'
+                            }
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    const label = context.label || '';
+                                    const value = context.raw || 0;
+                                    const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                                    const percentage = Math.round((value / total) * 100);
+                                    return `${label}: ${value} (${percentage}%)`;
+                                }
+                            }
+                        }
+                    },
+                    cutout: '70%'
+                }
+            });
+
+            // Time Series Chart
+            const churnOverTime = {{ churn_over_time|tojson }};
+            const dateLabels = [...new Set(churnOverTime.map(row => row[0]))];
+            const churnCounts = dateLabels.map(date =>
+                churnOverTime.filter(r => r[0] === date && r[1] === 'Will Churn').map(r => r[2])[0] || 0
+            );
+            const noChurnCounts = dateLabels.map(date =>
+                churnOverTime.filter(r => r[0] === date && r[1] === 'Will Not Churn').map(r => r[2])[0] || 0
+            );
+
+            new Chart(document.getElementById('churnLine'), {
+                type: 'line',
+                data: {
+                    labels: dateLabels,
+                    datasets: [
+                        {
+                            label: 'Will Churn',
+                            data: churnCounts,
+                            borderColor: '#e5383b',
+                            backgroundColor: 'rgba(229, 56, 59, 0.1)',
+                            fill: true,
+                            tension: 0.4,
+                            borderWidth: 3,
+                            pointRadius: 5,
+                            pointHoverRadius: 7
+                        },
+                        {
+                            label: 'Will Not Churn',
+                            data: noChurnCounts,
+                            borderColor: '#38b000',
+                            backgroundColor: 'rgba(56, 176, 0, 0.1)',
+                            fill: true,
+                            tension: 0.4,
+                            borderWidth: 3,
+                            pointRadius: 5,
+                            pointHoverRadius: 7
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: {
+                                padding: 20,
+                                usePointStyle: true,
+                                pointStyle: 'circle'
+                            }
+                        },
+                        tooltip: {
+                            mode: 'index',
+                            intersect: false
+                        }
+                    },
+                    interaction: {
+                        mode: 'nearest',
+                        axis: 'x',
+                        intersect: false
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            grid: {
+                                drawBorder: false
+                            }
+                        },
+                        x: {
+                            grid: {
+                                display: false
+                            }
+                        }
+                    }
+                }
+            });
+
+            // Credit Limit Histogram
+            const distData = {{ dist_data|tojson }};
+            const creditLimits = distData.map(d => d[0]);
+
+            new Chart(document.getElementById('creditDist'), {
+                type: 'bar',
+                data: {
+                    labels: creditLimits,
+                    datasets: [{
+                        label: 'Customers',
+                        data: creditLimits,
+                        backgroundColor: '#4361ee',
+                        borderWidth: 0,
+                        borderRadius: 6,
+                        hoverBackgroundColor: '#3a56d4'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    },
+                    scales: {
+                        x: {
+                            title: {
+                                display: true,
+                                text: 'Credit Limit',
+                                font: {
+                                    weight: 'bold'
+                                }
+                            },
+                            grid: {
+                                display: false
+                            }
+                        },
+                        y: {
+                            title: {
+                                display: true,
+                                text: 'Number of Customers',
+                                font: {
+                                    weight: 'bold'
+                                }
+                            },
+                            beginAtZero: true,
+                            grid: {
+                                drawBorder: false
+                            }
+                        }
+                    }
+                }
+            });
+
+            // Segmentation: Churn by Age Group
+            const churnByAgeGroupData = {{ age_group_summary|tojson }};
+            new Chart(document.getElementById('churnByAgeGroup'), {
+                type: 'bar',
+                data: {
+                    labels: churnByAgeGroupData.labels,
+                    datasets: [
+                        {
+                            label: 'Will Churn',
+                            data: churnByAgeGroupData.will_churn,
+                            backgroundColor: '#e5383b',
+                            borderRadius: 6
+                        },
+                        {
+                            label: 'Will Not Churn',
+                            data: churnByAgeGroupData.will_not_churn,
+                            backgroundColor: '#38b000',
+                            borderRadius: 6
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: {
+                                padding: 20,
+                                usePointStyle: true,
+                                pointStyle: 'circle'
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            stacked: true,
+                            grid: {
+                                drawBorder: false
+                            }
+                        },
+                        x: {
+                            stacked: true,
+                            grid: {
+                                display: false
+                            }
+                        }
+                    }
+                }
+            });
+
+            // Segmentation: Churn by Income Category
+            const churnByIncomeCategoryData = {{ income_cat_summary|tojson }};
+            new Chart(document.getElementById('churnByIncomeCategory'), {
+                type: 'bar',
+                data: {
+                    labels: churnByIncomeCategoryData.labels,
+                    datasets: [
+                        {
+                            label: 'Will Churn',
+                            data: churnByIncomeCategoryData.will_churn,
+                            backgroundColor: '#e5383b',
+                            borderRadius: 6
+                        },
+                        {
+                            label: 'Will Not Churn',
+                            data: churnByIncomeCategoryData.will_not_churn,
+                            backgroundColor: '#38b000',
+                            borderRadius: 6
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: {
+                                padding: 20,
+                                usePointStyle: true,
+                                pointStyle: 'circle'
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            stacked: true,
+                            grid: {
+                                drawBorder: false
+                            }
+                        },
+                        x: {
+                            stacked: true,
+                            grid: {
+                                display: false
+                            }
+                        }
+                    }
+                }
+            });
+
+            // Churn by Utilization
+            new Chart(document.getElementById('churnByUtilization'), {
+                type: 'radar',
+                data: {
+                    labels: ['<20%', '20-40%', '40-60%', '60-80%', '80-100%'],
+                    datasets: [
+                        {
+                            label: 'Churn Rate',
+                            data: [12, 25, 38, 62, 78],
+                            backgroundColor: 'rgba(229, 56, 59, 0.2)',
+                            borderColor: '#e5383b',
+                            borderWidth: 2,
+                            pointBackgroundColor: '#e5383b',
+                            pointHoverRadius: 6
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom'
+                        }
+                    },
+                    scales: {
+                        r: {
+                            angleLines: {
+                                display: true,
+                                color: 'rgba(0, 0, 0, 0.05)'
+                            },
+                            suggestedMin: 0,
+                            suggestedMax: 100
+                        }
+                    }
+                }
+            });
+
+            // Churn by Product Count
+            new Chart(document.getElementById('churnByProductCount'), {
+                type: 'polarArea',
+                data: {
+                    labels: ['1 Product', '2 Products', '3 Products', '4+ Products'],
+                    datasets: [{
+                        data: [45, 30, 15, 10],
+                        backgroundColor: [
+                            'rgba(229, 56, 59, 0.7)',
+                            'rgba(244, 140, 6, 0.7)',
+                            'rgba(67, 97, 238, 0.7)',
+                            'rgba(56, 176, 0, 0.7)'
+                        ],
+                        borderWidth: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom'
+                        }
+                    }
+                }
+            });
+
+            // Transaction Trends
+            new Chart(document.getElementById('transactionTrends'), {
+                type: 'line',
+                data: {
+                    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+                    datasets: [
+                        {
+                            label: 'Churn Customers',
+                            data: [120, 190, 170, 210, 230, 250],
+                            borderColor: '#e5383b',
+                            backgroundColor: 'rgba(229, 56, 59, 0.1)',
+                            tension: 0.4,
+                            fill: true
+                        },
+                        {
+                            label: 'Retained Customers',
+                            data: [300, 310, 290, 320, 330, 340],
+                            borderColor: '#38b000',
+                            backgroundColor: 'rgba(56, 176, 0, 0.1)',
+                            tension: 0.4,
+                            fill: true
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom'
+                        }
+                    }
+                }
+            });
+
+            // Utilization Patterns
+            new Chart(document.getElementById('utilizationPatterns'), {
+                type: 'bar',
+                data: {
+                    labels: ['<20%', '20-40%', '40-60%', '60-80%', '80-100%'],
+                    datasets: [
+                        {
+                            label: 'Churn Customers',
+                            data: [15, 35, 60, 85, 95],
+                            backgroundColor: '#e5383b'
+                        },
+                        {
+                            label: 'Retained Customers',
+                            data: [85, 65, 40, 15, 5],
+                            backgroundColor: '#38b000'
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom'
+                        }
+                    },
+                    scales: {
+                        x: {
+                            stacked: true
+                        },
+                        y: {
+                            stacked: true
+                        }
+                    }
+                }
+            });
+        }
+
+        // Initialize charts when page loads
+        document.addEventListener('DOMContentLoaded', initCharts);
+
+        // Reinitialize charts when tab changes
+        document.querySelectorAll('[data-bs-toggle="tab"]').forEach(tab => {
+            tab.addEventListener('shown.bs.tab', function() {
+                // Destroy existing charts
+                Chart.getChart('churnPie')?.destroy();
+                Chart.getChart('churnLine')?.destroy();
+                Chart.getChart('creditDist')?.destroy();
+                Chart.getChart('churnByAgeGroup')?.destroy();
+                Chart.getChart('churnByIncomeCategory')?.destroy();
+                Chart.getChart('churnByUtilization')?.destroy();
+                Chart.getChart('churnByProductCount')?.destroy();
+                Chart.getChart('transactionTrends')?.destroy();
+                Chart.getChart('utilizationPatterns')?.destroy();
+
+                // Reinitialize charts
+                initCharts();
+            });
+        });
+
+        // Add animation to tab content when switching
+        document.querySelectorAll('[data-bs-toggle="tab"]').forEach(tab => {
+            tab.addEventListener('click', function() {
+                const target = this.getAttribute('href');
+                document.querySelector(target).classList.add('animate__animated', 'animate__fadeIn');
+            });
+        });
+
+        // Remove animation class after animation completes
+        document.querySelectorAll('.tab-pane').forEach(pane => {
+            pane.addEventListener('animationend', function() {
+                this.classList.remove('animate__animated', 'animate__fadeIn');
+            });
+        });
+
+        // Smooth scroll for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                e.preventDefault();
+                document.querySelector(this.getAttribute('href')).scrollIntoView({
+                    behavior: 'smooth'
+                });
+            });
+        });
+    </script>
+</body>
+</html>

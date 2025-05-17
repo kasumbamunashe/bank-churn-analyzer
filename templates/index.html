@@ -1,0 +1,693 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Bankers Attrition Prediction</title>
+    <!-- Glassmorphism CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/glassmorphism-ui/dist/glassmorphism.min.css" />
+    <!-- Bootstrap 5 -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <!-- Animate.css -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
+    <!-- Font Awesome 6 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <!-- AOS Animation Library -->
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet" />
+    <style>
+        :root {
+            --primary: #6c5ce7;
+            --primary-dark: #5649c0;
+            --secondary: #00cec9;
+            --accent: #fd79a8;
+            --dark: #2d3436;
+            --light: #f5f6fa;
+            --glass-blur: 12px;
+            --glass-opacity: 0.2;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+            color: var(--light);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        .hero-section {
+            position: relative;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            overflow: hidden;
+        }
+
+        .hero-bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80') center/cover no-repeat;
+            z-index: -2;
+        }
+
+        .hero-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(13, 32, 43, 0.9) 0%, rgba(32, 58, 67, 0.9) 50%, rgba(44, 83, 100, 0.9) 100%);
+            z-index: -1;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 1;
+            text-align: center;
+        }
+
+        .hero-title {
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: 700;
+            font-size: 4rem;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            margin-bottom: 1.5rem;
+            text-shadow: 0 4px 20px rgba(108, 92, 231, 0.3);
+        }
+
+        .hero-subtitle {
+            font-size: 1.5rem;
+            max-width: 700px;
+            margin: 0 auto 3rem;
+            opacity: 0.9;
+        }
+
+        /* Glassmorphism Cards */
+        .glass-card {
+            background: rgba(255, 255, 255, var(--glass-opacity));
+            backdrop-filter: blur(var(--glass-blur));
+            -webkit-backdrop-filter: blur(var(--glass-blur));
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+            transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            overflow: hidden;
+            position: relative;
+        }
+
+        .glass-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(45deg, transparent, rgba(255,255,255,0.1), transparent);
+            transform: translateX(-100%);
+            transition: transform 0.6s ease;
+        }
+
+        .glass-card:hover {
+            transform: translateY(-10px) scale(1.02);
+            box-shadow: 0 15px 45px rgba(0, 0, 0, 0.3);
+        }
+
+        .glass-card:hover::before {
+            transform: translateX(100%);
+        }
+
+        /* Feature Icons */
+        .feature-icon {
+            font-size: 3rem;
+            margin-bottom: 1.5rem;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            transition: all 0.5s ease;
+        }
+
+        /* Floating Animation */
+        .floating {
+            animation: floating 6s ease-in-out infinite;
+        }
+
+        @keyframes floating {
+            0% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(5deg); }
+            100% { transform: translateY(0px) rotate(0deg); }
+        }
+
+        /* Pulse Animation */
+        .pulse {
+            animation: pulse 3s infinite;
+        }
+
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(108, 92, 231, 0.5); }
+            70% { box-shadow: 0 0 0 20px rgba(108, 92, 231, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(108, 92, 231, 0); }
+        }
+
+        /* Gradient Button */
+        .gradient-btn {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border: none;
+            color: white;
+            padding: 15px 40px;
+            font-weight: 600;
+            border-radius: 50px;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.5s ease;
+            box-shadow: 0 10px 20px rgba(108, 92, 231, 0.3);
+        }
+
+        .gradient-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 30px rgba(108, 92, 231, 0.4);
+        }
+
+        .gradient-btn:active {
+            transform: translateY(1px);
+        }
+
+        /* Floating Particles */
+        .particle {
+            position: absolute;
+            border-radius: 50%;
+            pointer-events: none;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            opacity: 0.5;
+            filter: blur(5px);
+        }
+
+        /* Section Styling */
+        .section {
+            padding: 100px 0;
+            position: relative;
+        }
+
+        .section-title {
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: 700;
+            font-size: 2.5rem;
+            margin-bottom: 1.5rem;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        /* Feature Grid */
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+        }
+
+        /* Footer */
+        footer {
+            background: rgba(0, 0, 0, 0.2);
+            backdrop-filter: blur(var(--glass-blur));
+            -webkit-backdrop-filter: blur(var(--glass-blur));
+            padding: 3rem 0;
+            position: relative;
+        }
+
+        .social-icon {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            margin: 0 10px;
+            transition: all 0.3s ease;
+        }
+
+        .social-icon:hover {
+            background: var(--primary);
+            transform: translateY(-5px) rotate(10deg);
+        }
+
+        /* Responsive Adjustments */
+        @media (max-width: 768px) {
+            .hero-title {
+                font-size: 2.5rem;
+            }
+
+            .hero-subtitle {
+                font-size: 1.2rem;
+            }
+
+            .section {
+                padding: 60px 0;
+            }
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 10px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(var(--primary), var(--secondary));
+            border-radius: 10px;
+        }
+
+        /* Floating Blobs */
+        .blob {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(40px);
+            opacity: 0.2;
+            z-index: -1;
+        }
+
+        .blob-1 {
+            width: 300px;
+            height: 300px;
+            background: var(--primary);
+            top: 20%;
+            left: 10%;
+            animation: float 15s ease-in-out infinite;
+        }
+
+        .blob-2 {
+            width: 400px;
+            height: 400px;
+            background: var(--secondary);
+            bottom: 10%;
+            right: 10%;
+            animation: float 18s ease-in-out infinite reverse;
+        }
+
+        @keyframes float {
+            0% { transform: translate(0, 0) rotate(0deg); }
+            33% { transform: translate(50px, 50px) rotate(5deg); }
+            66% { transform: translate(-30px, 70px) rotate(-5deg); }
+            100% { transform: translate(0, 0) rotate(0deg); }
+        }
+
+        /* Neon Glow Effect */
+        .neon-text {
+            text-shadow: 0 0 10px rgba(108, 92, 231, 0.7),
+                         0 0 20px rgba(108, 92, 231, 0.5),
+                         0 0 30px rgba(108, 92, 231, 0.3);
+        }
+
+        /* Hover Effects */
+        .hover-scale {
+            transition: transform 0.5s ease;
+        }
+
+        .hover-scale:hover {
+            transform: scale(1.05);
+        }
+
+        /* Gradient Border */
+        .gradient-border {
+            position: relative;
+            border-radius: 20px;
+        }
+
+        .gradient-border::after {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            z-index: -1;
+            border-radius: 22px;
+            opacity: 0.7;
+            transition: opacity 0.3s ease;
+        }
+
+        .gradient-border:hover::after {
+            opacity: 1;
+        }
+    </style>
+</head>
+<body>
+    <!-- Floating Blobs -->
+    <div class="blob blob-1"></div>
+    <div class="blob blob-2"></div>
+
+    <!-- Hero Section -->
+    <section class="hero-section">
+        <div class="hero-bg"></div>
+        <div class="hero-overlay"></div>
+
+        <!-- Animated Particles -->
+        <div id="particles-js"></div>
+
+        <div class="container">
+            <div class="hero-content" data-aos="fade-up" data-aos-duration="1000">
+                <div class="mb-5">
+                    <img src="https://cdn-icons-png.flaticon.com/512/2889/2889676.png" alt="Analytics Icon" width="120" class="floating hover-scale">
+                </div>
+
+                <h1 class="hero-title neon-text" data-aos="fade-up" data-aos-delay="200">
+                    Bankers Attrition Prediction
+                </h1>
+
+                <p class="hero-subtitle" data-aos="fade-up" data-aos-delay="400">
+                    Harness the power of AI to predict customer churn with 95% accuracy and take proactive retention measures
+                </p>
+
+                <div data-aos="fade-up" data-aos-delay="600">
+                    <a href="{{ url_for('auth') }}" class="gradient-btn pulse">
+                        <i class="fas fa-rocket me-2"></i> Get Started Now
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="section">
+        <div class="container">
+            <div class="text-center mb-5" data-aos="fade-up">
+                <h2 class="section-title">Why Our Solution Stands Out</h2>
+                <p class="lead" data-aos="fade-up" data-aos-delay="200">
+                    Advanced features designed to give you the competitive edge in customer retention
+                </p>
+            </div>
+
+            <div class="feature-grid">
+                <!-- Feature 1 -->
+                <div class="glass-card p-4 gradient-border" data-aos="fade-up" data-aos-delay="200">
+                    <div class="feature-icon">
+                        <i class="fas fa-brain"></i>
+                    </div>
+                    <h3 class="mb-3">AI-Powered Insights</h3>
+                    <p>
+                        Our cutting-edge Random Forest algorithm delivers predictions with industry-leading 95% accuracy,
+                        helping you identify at-risk customers before they churn.
+                    </p>
+                </div>
+
+                <!-- Feature 2 -->
+                <div class="glass-card p-4 gradient-border" data-aos="fade-up" data-aos-delay="400">
+                    <div class="feature-icon">
+                        <i class="fas fa-chart-network"></i>
+                    </div>
+                    <h3 class="mb-3">Real-time Analytics</h3>
+                    <p>
+                        Interactive dashboards provide real-time insights into customer behavior patterns and churn risk factors,
+                        updated continuously as new data flows in.
+                    </p>
+                </div>
+
+                <!-- Feature 3 -->
+                <div class="glass-card p-4 gradient-border" data-aos="fade-up" data-aos-delay="600">
+                    <div class="feature-icon">
+                        <i class="fas fa-shield-alt"></i>
+                    </div>
+                    <h3 class="mb-3">Enterprise Security</h3>
+                    <p>
+                        Military-grade encryption and strict access controls ensure your customer data remains completely secure
+                        and compliant with all financial regulations.
+                    </p>
+                </div>
+
+                <!-- Feature 4 -->
+                <div class="glass-card p-4 gradient-border" data-aos="fade-up" data-aos-delay="200">
+                    <div class="feature-icon">
+                        <i class="fas fa-robot"></i>
+                    </div>
+                    <h3 class="mb-3">Automated Alerts</h3>
+                    <p>
+                        Receive instant notifications when high-value customers show churn risk signals, with recommended
+                        retention strategies tailored to each customer profile.
+                    </p>
+                </div>
+
+                <!-- Feature 5 -->
+                <div class="glass-card p-4 gradient-border" data-aos="fade-up" data-aos-delay="400">
+                    <div class="feature-icon">
+                        <i class="fas fa-project-diagram"></i>
+                    </div>
+                    <h3 class="mb-3">Segmentation Tools</h3>
+                    <p>
+                        Advanced clustering algorithms automatically segment your customer base into meaningful groups
+                        for targeted retention campaigns.
+                    </p>
+                </div>
+
+                <!-- Feature 6 -->
+                <div class="glass-card p-4 gradient-border" data-aos="fade-up" data-aos-delay="600">
+                    <div class="feature-icon">
+                        <i class="fas fa-lightbulb"></i>
+                    </div>
+                    <h3 class="mb-3">Actionable Insights</h3>
+                    <p>
+                        Our system doesn't just predict churn - it provides clear, actionable recommendations to improve
+                        customer satisfaction and loyalty.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Stats Section -->
+    <section class="section" style="background: rgba(0, 0, 0, 0.2); backdrop-filter: blur(var(--glass-blur));">
+        <div class="container">
+            <div class="row text-center">
+                <!-- Stat 1 -->
+                <div class="col-md-4 mb-4 mb-md-0" data-aos="fade-up" data-aos-delay="200">
+                    <div class="glass-card p-4 h-100 hover-scale">
+                        <h2 class="display-3 mb-2" style="color: var(--secondary);">95%</h2>
+                        <h4>Prediction Accuracy</h4>
+                        <p class="mb-0">Industry-leading precision in churn detection</p>
+                    </div>
+                </div>
+
+                <!-- Stat 2 -->
+                <div class="col-md-4 mb-4 mb-md-0" data-aos="fade-up" data-aos-delay="400">
+                    <div class="glass-card p-4 h-100 hover-scale">
+                        <h2 class="display-3 mb-2" style="color: var(--accent);">40%</h2>
+                        <h4>Reduction in Churn</h4>
+                        <p class="mb-0">Average improvement for our clients</p>
+                    </div>
+                </div>
+
+                <!-- Stat 3 -->
+                <div class="col-md-4" data-aos="fade-up" data-aos-delay="600">
+                    <div class="glass-card p-4 h-100 hover-scale">
+                        <h2 class="display-3 mb-2" style="color: var(--primary);">24/7</h2>
+                        <h4>Real-time Monitoring</h4>
+                        <p class="mb-0">Continuous protection against customer attrition</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="section">
+        <div class="container text-center" data-aos="zoom-in">
+            <h2 class="section-title mb-4">Ready to Transform Your Retention Strategy?</h2>
+            <p class="lead mb-5" data-aos="fade-up" data-aos-delay="200">
+                Join leading financial institutions who trust our platform to protect their customer relationships
+            </p>
+            <div data-aos="fade-up" data-aos-delay="400">
+                <a href="{{ url_for('auth') }}" class="gradient-btn me-3 mb-3">
+                    <i class="fas fa-user-plus me-2"></i> Start Free Trial
+                </a>
+                <a href="#" class="btn btn-outline-light btn-lg mb-3">
+                    <i class="fas fa-play-circle me-2"></i> Watch Demo
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="text-center">
+        <div class="container">
+            <div class="mb-4">
+                <a href="#" class="social-icon" data-aos="fade-up" data-aos-delay="100"><i class="fab fa-twitter"></i></a>
+                <a href="#" class="social-icon" data-aos="fade-up" data-aos-delay="200"><i class="fab fa-linkedin-in"></i></a>
+                <a href="#" class="social-icon" data-aos="fade-up" data-aos-delay="300"><i class="fab fa-github"></i></a>
+                <a href="#" class="social-icon" data-aos="fade-up" data-aos-delay="400"><i class="fab fa-facebook-f"></i></a>
+            </div>
+            <p class="mb-2" data-aos="fade-up" data-aos-delay="500">
+                &copy; 2023 Bankers Attrition Prediction. All rights reserved.
+            </p>
+            <p class="mb-0" data-aos="fade-up" data-aos-delay="600">
+                <a href="#" class="text-white">Privacy Policy</a> | <a href="#" class="text-white">Terms of Service</a>
+            </p>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
+    <script>
+        // Initialize AOS animations
+        AOS.init({
+            duration: 800,
+            easing: 'ease-in-out',
+            once: false
+        });
+
+        // Initialize particles.js
+        document.addEventListener('DOMContentLoaded', function() {
+            if (document.getElementById('particles-js')) {
+                particlesJS('particles-js', {
+                    "particles": {
+                        "number": {
+                            "value": 80,
+                            "density": {
+                                "enable": true,
+                                "value_area": 800
+                            }
+                        },
+                        "color": {
+                            "value": ["#6c5ce7", "#00cec9", "#fd79a8"]
+                        },
+                        "shape": {
+                            "type": "circle",
+                            "stroke": {
+                                "width": 0,
+                                "color": "#000000"
+                            },
+                            "polygon": {
+                                "nb_sides": 5
+                            }
+                        },
+                        "opacity": {
+                            "value": 0.5,
+                            "random": true,
+                            "anim": {
+                                "enable": true,
+                                "speed": 1,
+                                "opacity_min": 0.1,
+                                "sync": false
+                            }
+                        },
+                        "size": {
+                            "value": 3,
+                            "random": true,
+                            "anim": {
+                                "enable": true,
+                                "speed": 2,
+                                "size_min": 0.1,
+                                "sync": false
+                            }
+                        },
+                        "line_linked": {
+                            "enable": true,
+                            "distance": 150,
+                            "color": "#6c5ce7",
+                            "opacity": 0.3,
+                            "width": 1
+                        },
+                        "move": {
+                            "enable": true,
+                            "speed": 1,
+                            "direction": "none",
+                            "random": true,
+                            "straight": false,
+                            "out_mode": "out",
+                            "bounce": false,
+                            "attract": {
+                                "enable": true,
+                                "rotateX": 600,
+                                "rotateY": 1200
+                            }
+                        }
+                    },
+                    "interactivity": {
+                        "detect_on": "canvas",
+                        "events": {
+                            "onhover": {
+                                "enable": true,
+                                "mode": "grab"
+                            },
+                            "onclick": {
+                                "enable": true,
+                                "mode": "push"
+                            },
+                            "resize": true
+                        },
+                        "modes": {
+                            "grab": {
+                                "distance": 140,
+                                "line_linked": {
+                                    "opacity": 0.8
+                                }
+                            },
+                            "push": {
+                                "particles_nb": 4
+                            }
+                        }
+                    },
+                    "retina_detect": true
+                });
+            }
+
+            // Add floating particles manually as fallback
+            const particlesContainer = document.createElement('div');
+            particlesContainer.style.position = 'fixed';
+            particlesContainer.style.top = '0';
+            particlesContainer.style.left = '0';
+            particlesContainer.style.width = '100%';
+            particlesContainer.style.height = '100%';
+            particlesContainer.style.pointerEvents = 'none';
+            particlesContainer.style.zIndex = '0';
+            document.body.appendChild(particlesContainer);
+
+            for (let i = 0; i < 30; i++) {
+                const particle = document.createElement('div');
+                particle.classList.add('particle');
+
+                // Random properties
+                const size = Math.random() * 10 + 5;
+                particle.style.width = `${size}px`;
+                particle.style.height = `${size}px`;
+                particle.style.left = `${Math.random() * 100}%`;
+                particle.style.top = `${Math.random() * 100}%`;
+
+                // Random animation
+                const duration = Math.random() * 20 + 10;
+                const delay = Math.random() * 5;
+                particle.style.animation = `float ${duration}s ease-in-out ${delay}s infinite`;
+
+                particlesContainer.appendChild(particle);
+            }
+        });
+
+        // Parallax effect on scroll
+        window.addEventListener('scroll', function() {
+            const scrollPosition = window.pageYOffset;
+            const heroContent = document.querySelector('.hero-content');
+            if (heroContent) {
+                heroContent.style.transform = `translateY(${scrollPosition * 0.3}px)`;
+            }
+
+            const floatingImg = document.querySelector('.floating');
+            if (floatingImg) {
+                floatingImg.style.transform = `translateY(${scrollPosition * 0.1}px) rotate(${scrollPosition * 0.05}deg)`;
+            }
+        });
+    </script>
+</body>
+</html>
